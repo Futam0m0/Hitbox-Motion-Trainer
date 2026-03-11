@@ -1,0 +1,1 @@
+print("Hitbox Motion Trainer Starting...")

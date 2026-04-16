@@ -1,5 +1,9 @@
 from core.buffer import InputBuffer
-from services.input_service import processInput, record_attempt
+from services.input_service import processInput
+from db import create_session
+from services.session_service import create_session_summary
+
+
 
 buffer = InputBuffer()
 
@@ -10,34 +14,33 @@ key_map = {
 }
 
 def run():
+    session_id = create_session()
+    print(f"Session started: {session_id}")
+
     print("Enter inputs (s= down, d= forward, sd = Down-Forward)")
 
     while True:
         line = input("Input: ")
 
         if line == "exit":
+            create_session_summary(session_id)
             break
 
         keys = line.split()
 
-        valid_input = True 
-
         for key in keys:
             if key in key_map:
-                direction = key_map[key]
-                buffer.addInput(direction)
+                buffer.addInput(key_map[key])
             else:
                 print(f"Invalid input: {key}")
-                valid_input = False
 
         print("Buffer:", buffer.buffer)
 
-        success = processInput(buffer)
+        success = processInput(buffer, session_id)
 
         if success:
-            print("Motion success logged!")
+            print("Motion success detected!")
         else:
             print("Motion failed!")
-            record_attempt(1, 1, 0, 0.0)
 
-        buffer.clear() 
+        buffer.clear()

@@ -8,7 +8,7 @@ create table Player(
 
 
 create table TrainingSession(
-    session_id int not null,
+    session_id int identity(1,1),
     player_id int,
     start_time datetime,
     end_time datetime,

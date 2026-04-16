@@ -19,12 +19,19 @@ create table TrainingSession(
 )
 
 create table MotionDefinition(
-    motion_id int not null,
+    motion_id int identity(1,1)not null,
     motion_name varchar(50) not null,
     motion_description varchar(100) not null ,
 
     primary key(motion_id)   
 )
+
+--list of special moves
+insert into Motiondefinition(motion_name,motion_description)
+values ('QCF','Quarter Circle Forward')
+
+insert into Motiondefinition(motion_name,motion_description)
+values ('DP','Dragon Punch')
 
 create table MotionAttempt(
     attempt_id int identity(1,1) not null,
@@ -51,6 +58,12 @@ create table MotionStep(
     foreign key (motion_id) references MotionDefinition(motion_id)
     on delete cascade on update cascade
 )
+-- data for steps 
+insert into MotionStep (motion_id, step_order, direction)
+values (1,1,'Down'),(1,2,'Down-Forward'),(1,3,'Forward')
+
+insert into MotionStep (motion_id, step_order, direction)
+values (2,1,'Forward'),(2,2,'Down'),(2,3,'Down-Forward')
 
 create table InputEvent(
     event_id int not null,

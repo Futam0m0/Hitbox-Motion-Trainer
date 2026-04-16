@@ -1,11 +1,10 @@
 from services.motion_service import detect_motion
 from services.db_service import record_attempt
+from services.motion_loader import load_motion
 
-MOTION_QCF = ["Down", "Down-Forward", "Forward"]
-
-def processInput(buffer, session_id):
-    motion_steps = MOTION_QCF
-    motion_id = 1
+def processInput(buffer, session_id, motion_id):
+    
+    motion_steps = load_motion(motion_id)   
 
     result = detect_motion(buffer.buffer, motion_steps)
 

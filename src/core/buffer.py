@@ -18,3 +18,17 @@ class InputBuffer:
 
     def getRecent(self,n):
         return self.buffer[-n:]
+
+    def getTimeWindow(self, n):
+        recent = self.getRecent(n)
+
+        if len(recent) < 2:
+            return 0.0
+
+        return recent[-1][1] - recent[0][1]
+
+    def clear(self):
+        self.buffer.clear()
+
+    def getDirections(self):
+        return [x[0] for x in self.buffer]

@@ -1,5 +1,5 @@
 from core.buffer import InputBuffer
-from services.input_service import processInput
+from services.input_service import processInput, record_attempt
 
 buffer = InputBuffer()
 
@@ -18,15 +18,26 @@ def run():
         if line == "exit":
             break
 
-
         keys = line.split()
+
+        valid_input = True 
+
         for key in keys:
             if key in key_map:
                 direction = key_map[key]
                 buffer.addInput(direction)
             else:
                 print(f"Invalid input: {key}")
-        print("Buffer: ",buffer.buffer)
+                valid_input = False
 
-        if processInput(buffer):
+        print("Buffer:", buffer.buffer)
+
+        success = processInput(buffer)
+
+        if success:
             print("Motion success logged!")
+        else:
+            print("Motion failed!")
+            record_attempt(1, 1, 0, 0.0)
+
+        buffer.clear() 

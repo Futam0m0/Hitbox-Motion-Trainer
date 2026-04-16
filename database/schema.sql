@@ -27,7 +27,7 @@ create table MotionDefinition(
 )
 
 create table MotionAttempt(
-    attempt_id int not null,
+    attempt_id int identity(1,1) not null,
     session_id int,
     motion_id int,
     success bit not null,

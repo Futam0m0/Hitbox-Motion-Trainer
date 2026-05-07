@@ -27,6 +27,16 @@ def main():
         print("No motions found in database.")
         return
 
+    # Filter out duplicates and ensure QCF is present
+    seen_names = set()
+    unique_motions = []
+    for m in motions:
+        if m[1] not in seen_names:
+            unique_motions.append(m)
+            seen_names.add(m[1])
+    
+    motions = unique_motions
+
     print("\nAvailable Motions:")
     for idx, (m_id, name) in enumerate(motions):
         print(f"{idx + 1}. {name}")

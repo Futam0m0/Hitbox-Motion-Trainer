@@ -11,6 +11,19 @@ class Direction(Enum):
     DOWN_LEFT = 1
     DOWN_RIGHT = 3
 
+# Mapping for visualization
+DIR_SYMBOLS = {
+    Direction.NEUTRAL: "5",
+    Direction.UP: "↑",
+    Direction.DOWN: "↓",
+    Direction.LEFT: "←",
+    Direction.RIGHT: "→",
+    Direction.UP_LEFT: "↖",
+    Direction.UP_RIGHT: "↗",
+    Direction.DOWN_LEFT: "↙",
+    Direction.DOWN_RIGHT: "↘"
+}
+
 # Numeric notation is standard in fighting games (numpad notation)
 # 7 8 9
 # 4 5 6

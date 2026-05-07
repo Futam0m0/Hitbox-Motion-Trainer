@@ -59,41 +59,21 @@ create table MotionStep(
     foreign key (motion_id) references MotionDefinition(motion_id)
     on delete cascade on update cascade
 )
--- data for steps 
-insert into MotionDefinition (motion_name, motion_description) values
-('DP', 'Dragon Punch (Forward, Down, Down-Forward)'),
-('QCB', 'Quarter Circle Back'),
-('HCF', 'Half Circle Forward'),
-('Sonic Boom', 'Charge Back -> Forward'),
-('Flash Kick', 'Charge Down -> Up');
-go
 
--- QCB (Let's assume ID 3)
-insert into MotionStep (motion_id, step_order, direction, min_frames) values
-(3, 1, 'Down', 0),
-(3, 2, 'Down-Back', 0),
-(3, 3, 'Back', 0);
-
--- HCF (ID 4)
-insert into MotionStep (motion_id, step_order, direction, min_frames) values
-(4, 1, 'Back', 0),
-(4, 2, 'Down-Back', 0),
-(4, 3, 'Down', 0),
-(4, 4, 'Down-Forward', 0),
-(4, 5, 'Forward', 0);
-
--- Sonic Boom (ID 5) - Charge Back (40 frames) -> Forward
-insert into MotionStep (motion_id, step_order, direction, min_frames) values
-(5, 1, 'Back', 40),
-(5, 2, 'Forward', 0);
-
--- Flash Kick (ID 6) - Charge Down (50 frames) -> Up
-insert into MotionStep (motion_id, step_order, direction, min_frames) values
-(6, 1, 'Down', 50),
-(6, 2, 'Up', 0);
+INSERT INTO MotionDefinition (motion_name, motion_description) VALUES 
+('QCF', 'Quarter Circle Forward'), ('DP', 'Dragon Punch'), ('QCB', 'Quarter Circle Back');
 
 
+INSERT INTO MotionStep (motion_id, step_order, direction, min_frames) VALUES 
+(1, 1, 'Down', 0), (1, 2, 'Down-Forward', 0), (1, 3, 'Forward', 0);
 
+-- DP (ID 2)
+INSERT INTO MotionStep (motion_id, step_order, direction, min_frames) VALUES 
+(2, 1, 'Forward', 0), (2, 2, 'Down', 0), (2, 3, 'Down-Forward', 0);
+
+-- Fix QCB Steps
+INSERT INTO MotionStep (motion_id, step_order, direction, min_frames) VALUES 
+(3, 1, 'Down', 0), (3, 2, 'Down-Back', 0), (3, 3, 'Back', 0);
 
 create table InputEvent(
     event_id int not null,

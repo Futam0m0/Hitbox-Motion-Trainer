@@ -7,7 +7,7 @@ class Visualizer:
         self.status_frames = 0 # Track how long to show status message
         self.status_text = ""
 
-    def render(self, current_direction, buffer, motion_id=None, status=None, target_steps=""):
+    def render(self, current_direction, buffer, motion_id=None, status=None, target_steps="", device_name="Unknown"):
         """
         Renders a console-based visualization of the current input state.
         status: "SUCCESS", "FAILED", or None
@@ -37,10 +37,12 @@ class Visualizer:
         target_str  = f"Target:  {target_steps}"
         buffer_str  = f"Buffer:  {' '.join(icons)}"
         frames_str  = f"Frames:  {' '.join(frames)}"
+        device_str  = f"Device:  {device_name}"
         
         # Use ANSI escape codes to clear lines and keep the display in place
-        print("\033[F\033[K" * 5, end="") # Move up 5 lines and clear
+        print("\033[F\033[K" * 6, end="") # Move up 6 lines and clear
         print(f"=== TRAINING MOTION {motion_id or ''} ===")
+        print(device_str)
         print(target_str)
         print(current_str)
         print(buffer_str)

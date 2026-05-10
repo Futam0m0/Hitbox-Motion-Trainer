@@ -9,13 +9,13 @@ def get_motion_statistics():
     cursor = conn.cursor()
     
     query = """
-    SELECT 
+    select 
         md.motion_name,
-        COUNT(ma.attempt_id) AS total_attempts,
-        SUM(CASE WHEN ma.success = 1 THEN 1 ELSE 0 END) AS successful_attempts,
-        CAST(SUM(CASE WHEN ma.success = 1 THEN 1.0 ELSE 0.0 END) / NULLIF(COUNT(ma.attempt_id), 0) * 100 AS DECIMAL(5,2)) AS success_rate,
-        AVG(CASE WHEN ma.success = 1 THEN ma.execution_time ELSE NULL END) AS avg_execution_time
-    FROM MotionDefinition md
+        count(ma.attempt_id) as total_attempts,
+        sum(CASE WHEN ma.success = 1 THEN 1 ELSE 0 END) as successful_attempts,
+        cast(sum(CASE WHEN ma.success = 1 THEN 1.0 ELSE 0.0 END) / NULLIF(count(ma.attempt_id), 0) * 100 AS DECIMAL(5,2)) as success_rate,
+        avg(CASE WHEN ma.success = 1 THEN ma.execution_time ELSE NULL END) as avg_execution_time
+    from MotionDefinition md
     LEFT JOIN MotionAttempt ma ON md.motion_id = ma.motion_id
     GROUP BY md.motion_id, md.motion_name
     ORDER BY success_rate DESC;
@@ -35,23 +35,23 @@ def get_session_statistics():
     cursor = conn.cursor()
     
     query = """
-    SELECT 
+    select 
         ts.session_id,
         ts.start_time,
         stats.attempts,
         stats.success_rate,
         stats.avg_time
-    FROM TrainingSession ts
-    JOIN (
-        SELECT 
+    from TrainingSession ts
+    join (
+        select 
             session_id,
-            COUNT(*) AS attempts,
-            CAST(SUM(CASE WHEN success = 1 THEN 1.0 ELSE 0.0 END) / COUNT(*) * 100 AS DECIMAL(5,2)) AS success_rate,
-            AVG(CASE WHEN success = 1 THEN execution_time ELSE NULL END) AS avg_time
-        FROM MotionAttempt
-        GROUP BY session_id
-        HAVING COUNT(*) > 0
-    ) AS stats ON ts.session_id = stats.session_id
+            count(*) as attempts,
+            cast(sum(CASE WHEN success = 1 THEN 1.0 ELSE 0.0 END) / count(*) * 100 AS DECIMAL(5,2)) as success_rate,
+            avg(CASE WHEN success = 1 THEN execution_time ELSE NULL END) as avg_time
+        from MotionAttempt
+        group by session_id
+        having count(*) > 0
+    ) as stats on ts.session_id = stats.session_id
     ORDER BY ts.start_time DESC;
     """
     
@@ -69,15 +69,15 @@ def get_motion_rankings():
     cursor = conn.cursor()
     
     query = """
-    SELECT 
+    select 
         md.motion_name,
         ma.execution_time,
-        RANK() OVER (PARTITION BY md.motion_id ORDER BY ma.execution_time ASC) as local_rank,
-        AVG(ma.execution_time) OVER (PARTITION BY md.motion_id) as motion_avg_time,
-        ma.execution_time - AVG(ma.execution_time) OVER (PARTITION BY md.motion_id) as diff_from_avg
-    FROM MotionAttempt ma
-    JOIN MotionDefinition md ON ma.motion_id = md.motion_id
-    WHERE ma.success = 1;
+        rank() over (partition by md.motion_id order by ma.execution_time asc) as local_rank,
+        avg(ma.execution_time) over (partition by md.motion_id) as motion_avg_time,
+        ma.execution_time - avg(ma.execution_time) over (partition by md.motion_id) as diff_from_avg
+    from MotionAttempt ma
+    join MotionDefinition md on ma.motion_id = md.motion_id
+    where ma.success = 1;
     """
     
     cursor.execute(query)
@@ -94,22 +94,23 @@ def get_consistency_report():
     cursor = conn.cursor()
     
     query = """
-    WITH SessionProgress AS (
-        SELECT 
+    with SessionProgress as (
+        select 
             ma.session_id,
             md.motion_name,
-            AVG(CASE WHEN ma.success = 1 THEN ma.execution_time ELSE NULL END) as session_avg,
-            ROW_NUMBER() OVER (PARTITION BY md.motion_id ORDER BY ma.session_id ASC) as session_order
-        FROM MotionAttempt ma
-        JOIN MotionDefinition md ON ma.motion_id = md.motion_id
-        GROUP BY ma.session_id, md.motion_id, md.motion_name
+            avg(CASE WHEN ma.success = 1 THEN ma.execution_time ELSE NULL END) as session_avg,
+            row_number() over (partition by md.motion_id order by ma.session_id asc) as session_order
+        from MotionAttempt ma
+        join MotionDefinition md on ma.motion_id = md.motion_id
+        group by ma.session_id, md.motion_id, md.motion_name
     )
-    SELECT 
+    select 
         motion_name,
         session_order,
         session_avg,
-        session_avg - LAG(session_avg) OVER (PARTITION BY motion_name ORDER BY session_order) as improvement
-    FROM SessionProgress;
+        session_avg - lag(session_avg) over (partition by motion_name order by session_order) as improvement
+    from SessionProgress
+    where session_order > 1
     """
     
     cursor.execute(query)
@@ -126,18 +127,18 @@ def get_running_averages():
     cursor = conn.cursor()
     
     query = """
-    SELECT 
+    select 
         md.motion_name,
         ma.attempt_id,
         ma.execution_time,
-        AVG(ma.execution_time) OVER (
-            PARTITION BY md.motion_id 
-            ORDER BY ma.attempt_id 
-            ROWS BETWEEN 4 PRECEDING AND CURRENT ROW
+        avg(ma.execution_time) over (
+            partition by md.motion_id 
+            order by ma.attempt_id 
+            rows between 4 preceding and current row
         ) as moving_avg_5_attempts
-    FROM MotionAttempt ma
-    JOIN MotionDefinition md ON ma.motion_id = md.motion_id
-    WHERE ma.success = 1;
+    from MotionAttempt ma
+    join MotionDefinition md on ma.motion_id = md.motion_id
+    where ma.success = 1;
     """
     
     cursor.execute(query)

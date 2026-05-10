@@ -60,19 +60,19 @@ create table MotionStep(
     on delete cascade on update cascade
 )
 
-INSERT INTO MotionDefinition (motion_name, motion_description) VALUES 
+insert into MotionDefinition (motion_name, motion_description) values 
 ('QCF', 'Quarter Circle Forward'), ('DP', 'Dragon Punch'), ('QCB', 'Quarter Circle Back');
 
 
-INSERT INTO MotionStep (motion_id, step_order, direction, min_frames) VALUES 
+insert into MotionStep (motion_id, step_order, direction, min_frames) values 
 (1, 1, 'Down', 0), (1, 2, 'Down-Forward', 0), (1, 3, 'Forward', 0);
 
 -- DP (ID 2)
-INSERT INTO MotionStep (motion_id, step_order, direction, min_frames) VALUES 
+insert into MotionStep (motion_id, step_order, direction, min_frames) values 
 (2, 1, 'Forward', 0), (2, 2, 'Down', 0), (2, 3, 'Down-Forward', 0);
 
 -- Fix QCB Steps
-INSERT INTO MotionStep (motion_id, step_order, direction, min_frames) VALUES 
+insert into MotionStep (motion_id, step_order, direction, min_frames) values 
 (3, 1, 'Down', 0), (3, 2, 'Down-Back', 0), (3, 3, 'Back', 0);
 
 create table InputEvent(

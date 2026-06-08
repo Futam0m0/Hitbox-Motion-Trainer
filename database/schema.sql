@@ -6,10 +6,11 @@ create table Player(
     primary key(player_id)
 )
 
+-------------------------------------
 
 create table TrainingSession(
     session_id int identity(1,1),
-    player_id int,
+    player_id int null,
     start_time datetime,
     end_time datetime,
 
@@ -17,6 +18,8 @@ create table TrainingSession(
     foreign key (player_id) references Player(player_id)
     on delete set null on update cascade
 )
+
+--------------------------------------
 
 create table MotionDefinition(
     motion_id int identity(1,1)not null,
@@ -26,12 +29,7 @@ create table MotionDefinition(
     primary key(motion_id)   
 )
 
---list of special moves
-insert into Motiondefinition(motion_name,motion_description)
-values ('QCF','Quarter Circle Forward')
-
-insert into Motiondefinition(motion_name,motion_description)
-values ('DP','Dragon Punch')
+---------------------------------------
 
 create table MotionAttempt(
     attempt_id int identity(1,1) not null,
@@ -48,6 +46,8 @@ create table MotionAttempt(
     on delete cascade on update cascade
 )
 
+-----------------------------------------
+
 create table MotionStep(
     motion_id int not null,
     step_order int check (step_order > 0),
@@ -59,21 +59,24 @@ create table MotionStep(
     foreign key (motion_id) references MotionDefinition(motion_id)
     on delete cascade on update cascade
 )
+------------------------------------------
 
 insert into MotionDefinition (motion_name, motion_description) values 
 ('QCF', 'Quarter Circle Forward'), ('DP', 'Dragon Punch'), ('QCB', 'Quarter Circle Back');
 
+--------------------------
 
 insert into MotionStep (motion_id, step_order, direction, min_frames) values 
 (1, 1, 'Down', 0), (1, 2, 'Down-Forward', 0), (1, 3, 'Forward', 0);
 
--- DP (ID 2)
 insert into MotionStep (motion_id, step_order, direction, min_frames) values 
 (2, 1, 'Forward', 0), (2, 2, 'Down', 0), (2, 3, 'Down-Forward', 0);
 
--- Fix QCB Steps
+
 insert into MotionStep (motion_id, step_order, direction, min_frames) values 
 (3, 1, 'Down', 0), (3, 2, 'Down-Back', 0), (3, 3, 'Back', 0);
+
+-------------------------------------------
 
 create table InputEvent(
     event_id int not null,
@@ -86,6 +89,8 @@ create table InputEvent(
     on delete cascade on update cascade
 )
 
+--------------------------------------------
+
 create table Controller(
     controller_id int not null,
     controller_name varchar(50) not null,
@@ -93,6 +98,7 @@ create table Controller(
 
     primary key(controller_id)
 )
+---------------------------------------------   
 
 create table ButtonMapping(
     mapping_id int not null,
@@ -105,6 +111,8 @@ create table ButtonMapping(
     on delete cascade on update cascade
 )
 
+---------------------------------------------
+
 create table SessionSummary(
     session_id int not null,
     total_attempts int check (total_attempts >= 0),
@@ -114,6 +122,7 @@ create table SessionSummary(
     foreign key (session_id) references TrainingSession(session_id)
     on delete cascade on update cascade
 )
+----------------------------------------------
 
 create table UserSettings(
     settings_id int not null,

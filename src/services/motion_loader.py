@@ -5,10 +5,10 @@ def load_motion(motion_id):
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT direction, COALESCE(min_frames, 0) as min_frames
-        FROM MotionStep
-        WHERE motion_id = ?
-        ORDER BY step_order ASC
+        select direction, coalesce(min_frames, 0) as min_frames
+        from MotionStep
+        where motion_id = ?
+        order by step_order asc
     """, (motion_id,))
 
     # Return list of tuples (direction, min_frames)
@@ -22,7 +22,7 @@ def get_all_motions():
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT motion_id, motion_name
+        select motion_id, motion_name
         FROM MotionDefinition
     """)
 

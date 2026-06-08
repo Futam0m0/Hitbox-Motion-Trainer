@@ -7,9 +7,9 @@ def record_attempt(session_id, motion_id, success, execution_time=0.0):
         cursor = conn.cursor()
 
         cursor.execute("""
-            INSERT INTO MotionAttempt
+            insert into MotionAttempt
             (session_id, motion_id, success, execution_time)
-            VALUES (?, ?, ?, ?)
+            values (?, ?, ?, ?)
         """, (session_id, motion_id, success, execution_time))
 
         conn.commit()

@@ -6,17 +6,17 @@ def create_session_summary(session_id):
 
     # total attempts
     cursor.execute("""
-        SELECT COUNT(*) 
-        FROM MotionAttempt
-        WHERE session_id = ?
+        select count(*) 
+        from MotionAttempt
+        where session_id = ?
     """, (session_id,))
     total = cursor.fetchone()[0]
 
     # successful attempts
     cursor.execute("""
-        SELECT COUNT(*) 
-        FROM MotionAttempt
-        WHERE session_id = ? AND success = 1
+        select count(*) 
+        from MotionAttempt
+        where session_id = ? and success = 1
     """, (session_id,))
     success = cursor.fetchone()[0]
 
@@ -24,8 +24,8 @@ def create_session_summary(session_id):
 
     # insert summary
     cursor.execute("""
-        INSERT INTO SessionSummary (session_id, total_attempts, success_rate)
-        VALUES (?, ?, ?)
+        insert into SessionSummary (session_id, total_attempts, success_rate)
+        values (?, ?, ?)
     """, (session_id, total, success_rate))
 
     conn.commit()
